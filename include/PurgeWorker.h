@@ -15,9 +15,9 @@
 #include <ip_addr.h>
 
 class PurgeWorker {
-
 protected:
 	ev::loop_ref& loop;
+	ev::timer poll_timer;
 	char const *address;
 	redisAsyncContext* redis;
 	int redisKeyMode;

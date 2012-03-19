@@ -2,23 +2,29 @@
 #include "PurgeWorker.h"
 #include "ip_addr.h"
 
-PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : loop(loop_) {
+PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) :
+	loop(loop_),
+	poll_timer(loop_),
+	address(address_),
+	redis(nullptr),
+	redisKeyMode(),
+	redisKeyString()
+{
 	ip_addr* addr = parseAddress(address_);
 
-	ev::timer poll_timer(loop_);
 	poll_timer.set<PurgeWorker, &PurgeWorker::onPoll>(this);
 	poll_timer.start(5.5, 0.0);
 
 	printf("connecting to redis on: %s:%i\n", addr->host, addr->port);
 
-	this->redis = redisAsyncConnect(addr->host, addr->port);
-	redisLibevAttach(this->loop, this->redis);
+	redis = redisAsyncConnect(addr->host, addr->port);
+	redisLibevAttach(loop, redis);
 
-	redisAsyncSetConnectCallback(this->redis, FNORDCAST1 &PurgeWorker::onConnect);    
-	redisAsyncSetDisconnectCallback(this->redis, FNORDCAST1 &PurgeWorker::onDisconnect);    
+	redisAsyncSetConnectCallback(redis, FNORDCAST1 &PurgeWorker::onConnect);    
+	redisAsyncSetDisconnectCallback(redis, FNORDCAST1 &PurgeWorker::onDisconnect);    
 
 	if (redis->err) {		
-		printf("ERROR: %s\n", this->redis->errstr);	
+		printf("ERROR: %s\n", redis->errstr);	
 		exit(1);
 	}
 }
