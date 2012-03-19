@@ -1,0 +1,9 @@
+dep/
+obj/
+cmake_install.cmake
+CMakeFiles
+CMakeCache.txt
+Makefile
+dwn_ppurge
+*.o
+!.gitignore
