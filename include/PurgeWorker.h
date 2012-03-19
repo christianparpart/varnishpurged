@@ -34,6 +34,9 @@ public:
 	static void onKeydata(redisAsyncContext *redis, void *response, void *privdata);
 	static void onConnect(const redisAsyncContext* redis, int status);
 	static void onDisconnect(const redisAsyncContext* redis, int status);	
+
+private:
+	void onPoll(ev::timer& timer, int revents);
 };
 
 #endif

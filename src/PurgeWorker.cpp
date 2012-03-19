@@ -6,7 +6,7 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : loop(loop_
 	ip_addr* addr = parseAddress(address_);
 
 	ev::timer poll_timer(loop_);
-	poll_timer.set<PurgeWorker, &RedisPurger::onPoll>(this);
+	poll_timer.set<PurgeWorker, &PurgeWorker::onPoll>(this);
 	poll_timer.start(5.5, 0.0);
 
 	printf("connecting to redis on: %s:%i\n", addr->host, addr->port);
@@ -23,8 +23,8 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : loop(loop_
 	}
 }
 
-void PurgeWorker::onPoll(ev::timer& timer, int revents){
-	print("polled\n");
+void PurgeWorker::onPoll(ev::timer& timer, int revents) {
+	printf("polled\n");
 }
 
 
