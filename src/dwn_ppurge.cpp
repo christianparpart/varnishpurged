@@ -8,14 +8,13 @@
 #include <ev++.h>
 
 #include "dwn_ppurge.h"
-
+#include "PurgeWorker.h"
 
 int main(int argc, char* argv[]) {
 	ev::default_loop ev;
 
-	PurgeWorker worker = new PurgeWorker();
+	PurgeWorker* worker = new PurgeWorker(ev, "localhost");
 
 	ev_loop(ev, 0);
 	return 0;
 }
-

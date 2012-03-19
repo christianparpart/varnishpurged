@@ -1,6 +1,8 @@
 #ifndef dwn_ppurge_h
 #define dwn_ppurge_h (1)
 
+#include <ev++.h>
+
 #define PPURGE_REDIS_SET "dawanda:product_purger:queue"
 
 #define VERSION_MAJOR 0

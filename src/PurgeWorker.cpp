@@ -1,6 +1,8 @@
+#include "dwn_ppurge.h"
 #include "PurgeWorker.h"
+#include "ip_addr.h"
 
-PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : BaseAdapter(loop_, address_) {
+PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : loop(loop_) {
 	ip_addr* addr = parseAddress(address_);
 	
 	if (addr->port == 0){
@@ -10,8 +12,8 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : BaseAdapte
 	this->redis = redisAsyncConnect(addr->host, addr->port);
 	redisLibevAttach(this->loop, this->redis);
 
-	redisAsyncSetConnectCallback(this->redis, FNORDCAST1 &RedisPurger::onConnect);    
-	redisAsyncSetDisconnectCallback(this->redis, FNORDCAST1 &RedisPurger::onDisconnect);    
+	redisAsyncSetConnectCallback(this->redis, FNORDCAST1 &PurgeWorker::onConnect);    
+	redisAsyncSetDisconnectCallback(this->redis, FNORDCAST1 &PurgeWorker::onDisconnect);    
 
 	if (redis->err) {		
 		printf("ERROR: %s\n", this->redis->errstr);	
@@ -21,7 +23,7 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : BaseAdapte
 
 
 void PurgeWorker::onKeydata(redisAsyncContext *redis, void* response, void* privdata) {
-	RedisPurger *self = reinterpret_cast<RedisPurger *>(privdata);	
+	PurgeWorker *self = reinterpret_cast<PurgeWorker *>(privdata);	
 	printf("onkeydata\n");
 	//self->purgeMatchingKeys(response);  
 }
