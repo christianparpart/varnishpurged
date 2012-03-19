@@ -11,6 +11,7 @@
 #include <hiredis/hiredis.h>
 #include <hiredis/async.h>
 #include <hiredis/adapters/libev.h>
+
 #include <ip_addr.h>
 
 class PurgeWorker {
@@ -27,6 +28,8 @@ public:
     void purgeNext();	
 	void purgeURL(std::string key);
 	ip_addr* parseAddress(const char* address);
+
+    static void onPoll(ev_timer* timer, int revents);
 
 	static void onKeydata(redisAsyncContext *redis, void *response, void *privdata);
 	static void onConnect(const redisAsyncContext* redis, int status);

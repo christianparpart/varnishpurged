@@ -5,6 +5,10 @@
 PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : loop(loop_) {
 	ip_addr* addr = parseAddress(address_);
 
+	ev::timer poll_timer(loop_);
+	poll_timer.set<PurgeWorker, &RedisPurger::onPoll>(this);
+	poll_timer.start(5.5, 0.0);
+
 	printf("connecting to redis on: %s:%i\n", addr->host, addr->port);
 
 	this->redis = redisAsyncConnect(addr->host, addr->port);
@@ -19,6 +23,10 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) : loop(loop_
 	}
 }
 
+void PurgeWorker::onPoll(ev::timer& timer, int revents){
+	print("polled\n");
+}
+
 
 void PurgeWorker::onKeydata(redisAsyncContext *redis, void* response, void* privdata) {
 	PurgeWorker *self = reinterpret_cast<PurgeWorker *>(privdata);	
@@ -27,9 +35,10 @@ void PurgeWorker::onKeydata(redisAsyncContext *redis, void* response, void* priv
 }
 
 void PurgeWorker::onConnect(const redisAsyncContext* redis, int status) {
-	if (status != REDIS_OK) {
-		printf("ERROR: %s\n", redis->errstr);
-		return;
+	if (status == REDIS_OK) {
+		printf("connected to redis, listening for product_ids\n");	
+	} else {
+  		printf("ERROR: %s\n", redis->errstr);	
 	}
 }
 
