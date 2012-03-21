@@ -4,10 +4,29 @@ varnishpurged
 small c++ app to purge urls from varnish quickly (using a redis-based queue) 
 
 
-adding purge-jobs/urls
-----------------------
+Installation
+------------
 
-urls are added without the leading http:// and without port! they should look like this:
+    git clone git@github.com:paulasmuth/varnishpurged.git
+    ./autogen.sh && make
+    sudo make install
+
+
+
+Usage
+-------
+
+    varnishpurged varnish_host:port redis_host:port
+
+e.g.
+
+    varnishpurged 10.0.0.1:8080 10.0.0.23:6379
+
+
+Adding Purge-Jobs
+-----------------
+
+purge-jbos (urls) are added without the leading http:// and without port! they should look like this:
 
     de.dawanda.com/product/1234
 
@@ -17,18 +36,11 @@ add a job with redis-cli
     SADD varnishpurged:queue de.dawanda.com/product/1234
 
 
-add a job from the rails app:
+add a job from a rails app:
 
-    REDIS.sadd("varnishpurged:queue", "de.dawanda.com/product/1234")
+    redis = Redis.new
+    redis.sadd("varnishpurged:queue", "de.dawanda.com/product/1234")
 
-
-
-
-running varnishpurged
----------------------
-
-    ./varnishpurged varnish_host:port redis_host:port
-    
 
 
 License
