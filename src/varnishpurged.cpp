@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 	parseAddress(argv[1], varnish_config->host, &varnish_config->port);
 
 	redis_cfg* redis_config = (redis_cfg *)malloc(sizeof(redis_cfg));
-	strncpy(redis_config->skey, "fnord:queue", sizeof(redis_config->host));
+	strncpy(redis_config->skey, PPURGE_REDIS_SET, sizeof(redis_config->host));
 	parseAddress(argv[2], redis_config->host, &redis_config->port);
 
 

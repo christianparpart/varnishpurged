@@ -3,7 +3,7 @@
 
 #include <ev++.h>
 
-#define PPURGE_REDIS_SET "dawanda:product_purger:queue"
+#define PPURGE_REDIS_SET "varnishpurged:queue"
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 0
