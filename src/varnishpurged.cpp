@@ -20,7 +20,7 @@ void parseAddress(char* address_, char* host, int* port){
 	}
 
 	*port = atoi(address.substr(ind+1).c_str());   
-	// strncpy(host, address.substr(0, ind).c_str(), STR_BUFSIZE);
+	strncpy(host, address.substr(0, ind).c_str(), STR_BUFSIZE);
 }
 
 

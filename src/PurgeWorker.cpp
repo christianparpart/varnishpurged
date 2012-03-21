@@ -46,13 +46,7 @@ void PurgeWorker::purgeUrl(char* url){
 	if(ind >= STR_BUFSIZE)
 		return;
 
-	snprintf(
-	  purge_url, STR_BUFSIZE, 
-	  "http://%s:%i%s", 
-	  varnish_config->host,
-	  varnish_config->port,
-	  (url + ind)
-	);
+	snprintf(purge_url, STR_BUFSIZE, "http://%s:%i%s", varnish_config->host, varnish_config->port, url + ind);
 
 	url[ind] = 0;
 
