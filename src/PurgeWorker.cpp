@@ -2,22 +2,17 @@
 #include "PurgeWorker.h"
 #include "ip_addr.h"
 
-PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) :
+PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config) :
 	loop(loop_),
 	poll_timer(loop_),
-	address(address_),
-	redis(nullptr),
-	redisKeyMode(),
-	redisKeyString()
+	redis(nullptr)
 {
-	ip_addr* addr = parseAddress(address_);
-
 	poll_timer.set<PurgeWorker, &PurgeWorker::onPoll>(this);
 	poll_timer.start(POLL_TIMEOUT_INIT, 0.0);
 
-	printf("connecting to redis on: %s:%i\n", addr->host, addr->port);
+	printf("connecting to redis on: %s:%i\n", redis_config->host, redis_config->port);
 
-	redis = redisAsyncConnect(addr->host, addr->port);
+	redis = redisAsyncConnect(redis_config->host, redis_config->port);
 	redisLibevAttach(loop, redis);
 
 	redisAsyncSetConnectCallback(redis, FNORDCAST1 &PurgeWorker::onConnect);    
@@ -71,25 +66,4 @@ void PurgeWorker::onDisconnect(const redisAsyncContext* redis, int status) {
 		printf("DISCONNECT: %s\n", redis->errstr);
 		exit(1);
 	}
-}
-
-
-ip_addr* PurgeWorker::parseAddress(const char* address_) {
-	std::string address = address_;
-	ip_addr* addr = (ip_addr *)malloc(sizeof(ip_addr));
-	int ind = address.find(":");
-
-	if(ind == -1){
-		addr->port = 0; 
-		strncpy(addr->host, address.c_str(), sizeof(addr->host));   
-	} else {
-		addr->port = atoi(address.substr(ind+1).c_str());   
-		strncpy(addr->host, address.substr(0, ind).c_str(), sizeof(addr->host));    
-	}
-
-	if (addr->port == 0){
-		addr->port = REDIS_DEFAULT_PORT;
-	}
-
-	return addr;
 }

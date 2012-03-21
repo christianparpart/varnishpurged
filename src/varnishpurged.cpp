@@ -8,7 +8,6 @@
 #include <ev++.h>
 
 #include "varnishpurged.h"
-#include "redis_cfg.h"
 #include "PurgeWorker.h"
 
 int main(int argc, char* argv[]) {
@@ -25,8 +24,29 @@ int main(int argc, char* argv[]) {
     //redis_cfg* redis_config = (redis_cfg *)malloc(sizeof(redis_cfg));
 
 
-	PurgeWorker* worker = new PurgeWorker(ev, "localhost");
+	PurgeWorker* worker = new PurgeWorker(ev, redis_config);
 
 	ev_loop(ev, 0);
 	return 0;
 }
+
+
+// void parseAddress(const char* address_) {
+// 	std::string address = address_;
+// 	ip_addr* addr = (ip_addr *)malloc(sizeof(ip_addr));
+// 	int ind = address.find(":");
+
+// 	if(ind == -1){
+// 		addr->port = 0; 
+// 		strncpy(addr->host, address.c_str(), sizeof(addr->host));   
+// 	} else {
+// 		addr->port = atoi(address.substr(ind+1).c_str());   
+// 		strncpy(addr->host, address.substr(0, ind).c_str(), sizeof(addr->host));    
+// 	}
+
+// 	if (addr->port == 0){
+// 		addr->port = REDIS_DEFAULT_PORT;
+// 	}
+
+// 	return addr;
+// }

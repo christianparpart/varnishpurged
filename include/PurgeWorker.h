@@ -12,7 +12,7 @@
 #include <hiredis/async.h>
 #include <hiredis/adapters/libev.h>
 
-#include <ip_addr.h>
+#include "redis_cfg.h"
 
 class PurgeWorker {
 protected:
@@ -24,9 +24,8 @@ protected:
 	char* redisKeyString;
 
 public:
-	PurgeWorker(ev::loop_ref& loop_, const char* address_);
+	PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config);
 	void purgeNext(std::string key);
-	ip_addr* parseAddress(const char* address);
 
     static void onPoll(ev_timer* timer, int revents);
 
