@@ -10,43 +10,39 @@
 #include "varnishpurged.h"
 #include "PurgeWorker.h"
 
+void parseAddress(char* address_, char* host, int* port){
+	std::string address = address_;
+	int ind = address.find(":");
+
+	if(ind == -1){
+		printf("ERROR: invalid address: %s\n", address_);
+		exit(1);
+	}
+
+	*port = atoi(address.substr(ind+1).c_str());   
+	// strncpy(host, address.substr(0, ind).c_str(), STR_BUFSIZE);
+}
+
+
 int main(int argc, char* argv[]) {
 	ev::default_loop ev;
 
-	// FIXPAUL: parse_longopts and build these config structs
-	redis_cfg* redis_config = (redis_cfg *)malloc(sizeof(redis_cfg));
-	strncpy(redis_config->host, "localhost", sizeof(redis_config->host));
-	strncpy(redis_config->skey, "fnord:queue", sizeof(redis_config->host));
-	redis_config->port = 6379;
+	if(argc != 3){
+		printf("usage: %s varnish_host:port redis_host:port\n", argv[0]);
+		exit(1);
+	}
 
-	// FIXPAUL: parse_longopts and build these config structs
+
 	varnish_cfg* varnish_config = (varnish_cfg *)malloc(sizeof(varnish_cfg));
-	strncpy(varnish_config->host, "localhost", sizeof(redis_config->host));
-	varnish_config->port = 80;
+	parseAddress(argv[1], varnish_config->host, &varnish_config->port);
+
+	redis_cfg* redis_config = (redis_cfg *)malloc(sizeof(redis_cfg));
+	strncpy(redis_config->skey, "fnord:queue", sizeof(redis_config->host));
+	parseAddress(argv[2], redis_config->host, &redis_config->port);
+
 
 	PurgeWorker* worker = new PurgeWorker(ev, redis_config, varnish_config);
 
 	ev_loop(ev, 0);
 	return 0;
 }
-
-
-// void parseAddress(const char* address_) {
-// 	std::string address = address_;
-// 	ip_addr* addr = (ip_addr *)malloc(sizeof(ip_addr));
-// 	int ind = address.find(":");
-
-// 	if(ind == -1){
-// 		addr->port = 0; 
-// 		strncpy(addr->host, address.c_str(), sizeof(addr->host));   
-// 	} else {
-// 		addr->port = atoi(address.substr(ind+1).c_str());   
-// 		strncpy(addr->host, address.substr(0, ind).c_str(), sizeof(addr->host));    
-// 	}
-
-// 	if (addr->port == 0){
-// 		addr->port = REDIS_DEFAULT_PORT;
-// 	}
-
-// 	return addr;
-// }
