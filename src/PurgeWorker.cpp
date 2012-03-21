@@ -13,7 +13,7 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) :
 	ip_addr* addr = parseAddress(address_);
 
 	poll_timer.set<PurgeWorker, &PurgeWorker::onPoll>(this);
-	poll_timer.start(5.5, 0.0);
+	poll_timer.start(POLL_TIMEOUT_INIT, 0.0);
 
 	printf("connecting to redis on: %s:%i\n", addr->host, addr->port);
 
@@ -31,6 +31,12 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) :
 
 void PurgeWorker::onPoll(ev::timer& timer, int revents) {
 	printf("polled\n");
+
+	// FIXPAUL: re-queue the poll with zero timeout if there was 
+	// something to process (work at maximum speed, then sleep)
+	// poll_timer.start(POLL_TIMEOUT_BUSY, 0.0);
+
+	poll_timer.start(POLL_TIMEOUT_IDLE, 0.0);
 }
 
 
@@ -42,7 +48,7 @@ void PurgeWorker::onKeydata(redisAsyncContext *redis, void* response, void* priv
 
 void PurgeWorker::onConnect(const redisAsyncContext* redis, int status) {
 	if (status == REDIS_OK) {
-		printf("connected to redis, listening for product_ids\n");	
+		printf("connected, listening for purge urls\n");	
 	} else {
   		printf("ERROR: %s\n", redis->errstr);	
   		exit(1);
