@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 	// FIXPAUL: parse_longopts and build these config structs
 	varnish_cfg* varnish_config = (varnish_cfg *)malloc(sizeof(varnish_cfg));
 	strncpy(varnish_config->host, "localhost", sizeof(redis_config->host));
-	varnish_config->port = 8080;
+	varnish_config->port = 80;
 
 	PurgeWorker* worker = new PurgeWorker(ev, redis_config, varnish_config);
 

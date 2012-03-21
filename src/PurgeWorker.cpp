@@ -26,8 +26,8 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_, varnish_
 	redisAsyncSetConnectCallback(redis, FNORDCAST1 &PurgeWorker::onConnect);    
 	redisAsyncSetDisconnectCallback(redis, FNORDCAST1 &PurgeWorker::onDisconnect);    
 
-	if (redis->err) {		
-		printf("ERROR: %s\n", redis->errstr);	
+	if (redis->err) {
+		printf("ERROR: %s\n", redis->errstr);
 		exit(1);
 	}
 }
@@ -35,10 +35,15 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_, varnish_
 
 void PurgeWorker::purgeUrl(char* url){
 	char purge_url[STR_BUFSIZE];
+	char purge_xhost[STR_BUFSIZE];
+	struct curl_slist *headers = NULL;
 	std::string source_url = url;
 	int ind = source_url.find("/");
 
 	if(ind == -1)
+		return;
+
+	if(ind >= STR_BUFSIZE)
 		return;
 
 	snprintf(
@@ -49,19 +54,23 @@ void PurgeWorker::purgeUrl(char* url){
 	  (url + ind)
 	);
 
-	printf("\npurging: %s -> %s \n", url, purge_url);
+	url[ind] = 0;
 
+	snprintf(purge_xhost, STR_BUFSIZE, "X-Host: %s", url);
+	headers = curl_slist_append(headers, purge_xhost);
+	
 	// this is a shortened version of what was previously called from the ruby code:
 	// curl --request PURGE --header X-Host:de.dawanda.com product-varnish:8080/product/1234
-	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
-
 	curl_easy_setopt(curl, CURLOPT_URL, purge_url);
 	curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PURGE");
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 300);
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 300);
-	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PURGE");
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, 10);
 
-	curl_easy_perform(curl);	
+	curl_easy_perform(curl);
 }
 
 
