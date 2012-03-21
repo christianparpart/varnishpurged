@@ -28,18 +28,18 @@ Adding Purge-Jobs
 
 purge-jobs (urls that should be purged) are added without the leading `http://` and without port. they should look like this:
 
-    de.dawanda.com/product/1234
+    my.website.com/product/1234
 
 
 add a job with redis-cli
 
-    SADD varnishpurged:queue my.url.com/product/1234
+    SADD varnishpurged:queue my.website.com/blog/1234
 
 
 add a job from a rails app:
 
     redis = Redis.new
-    redis.sadd("varnishpurged:queue", "my,url.com/product/1234")
+    redis.sadd("varnishpurged:queue", "my,website.com/blog/1234")
 
 
 
