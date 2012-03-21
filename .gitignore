@@ -4,6 +4,6 @@ cmake_install.cmake
 CMakeFiles
 CMakeCache.txt
 Makefile
-dwn_ppurge
+varnishpurged
 *.o
 !.gitignore

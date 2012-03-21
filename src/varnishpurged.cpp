@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <ev++.h>
 
-#include "dwn_ppurge.h"
+#include "varnishpurged.h"
 #include "PurgeWorker.h"
 
 int main(int argc, char* argv[]) {

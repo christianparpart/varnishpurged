@@ -1,4 +1,4 @@
-#include "dwn_ppurge.h"
+#include "varnishpurged.h"
 #include "PurgeWorker.h"
 #include "ip_addr.h"
 

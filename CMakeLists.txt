@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(fastpurge)
-set(PACKAGE_NAME "dawanda_product_purger")
+project(varnishpurged)
+set(PACKAGE_NAME "varnishpurged")
 set(PACKAGE_VERSION "0.1.0")
-set(PACKAGE_HOMEPAGE_URL "http://github.com/dawanda/dawanda_product_purger")
+set(PACKAGE_HOMEPAGE_URL "http://github.com/dawanda/varnishpurged")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 

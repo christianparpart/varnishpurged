@@ -6,6 +6,6 @@ add_definitions(
 	-DPACKAGE_HOMEPAGE_URL="${PACKAGE_HOMEPAGE_URL}"
 	-DVERSION="${PACKAGE_VERSION}")
 
-add_executable(dwn_ppurge dwn_ppurge.cpp PurgeWorker.cpp)
-target_link_libraries(dwn_ppurge ${EV_LIBRARIES})
-install(TARGETS dwn_ppurge RUNTIME DESTINATION bin)
+add_executable(varnishpurged varnishpurged.cpp PurgeWorker.cpp)
+target_link_libraries(varnishpurged ${EV_LIBRARIES})
+install(TARGETS varnishpurged RUNTIME DESTINATION bin)

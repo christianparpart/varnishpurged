@@ -1,5 +1,5 @@
-#ifndef dwn_ppurge_h
-#define dwn_ppurge_h (1)
+#ifndef varnishpurged_h
+#define varnishpurged_h (1)
 
 #include <ev++.h>
 

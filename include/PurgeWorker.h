@@ -1,5 +1,5 @@
-#ifndef dwn_ppurge_PurgeWorker_h
-#define dwn_ppurge_PurgeWorker_h
+#ifndef varnishpurged_PurgeWorker_h
+#define varnishpurged_PurgeWorker_h
 
 #define FNORDCAST1 (void (*)(const redisAsyncContext*, int))
 #define FNORDCAST2 (void (*)(redisAsyncContext*, void*, void*))
