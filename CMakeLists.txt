@@ -44,6 +44,10 @@ link_libraries("ev")
 # require hiredis
 link_libraries("hiredis")
 
+# require libcurl
+link_libraries("curl")
+
+
 # {{{ path prefixes
 # ---------------------------------------------------------------------------
 if (DEFINED CMAKE_INSTALL_PREFIX)

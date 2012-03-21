@@ -11,6 +11,7 @@
 #include <hiredis/hiredis.h>
 #include <hiredis/async.h>
 #include <hiredis/adapters/libev.h>
+#include <curl/curl.h>
 
 #include "redis_cfg.h"
 
@@ -20,6 +21,7 @@ protected:
 	ev::timer poll_timer;
 	redisAsyncContext* redis;
 	redis_cfg* redis_config;
+	CURL *curl;
 
 public:
 	PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config);
