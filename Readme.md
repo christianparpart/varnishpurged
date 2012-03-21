@@ -1,7 +1,7 @@
 varnishpurged
 =============
 
-small c++ app to purge urls from varnish quickly (using a redis-based queue) 
+small c++ app to purge items (urls) from varnish quickly. uses a redis based queue.
 
 
 Installation
@@ -33,13 +33,13 @@ purge-jobs (urls that should be purged) are added without the leading `http://` 
 
 add a job with redis-cli
 
-    SADD varnishpurged:queue de.dawanda.com/product/1234
+    SADD varnishpurged:queue my.url.com/product/1234
 
 
 add a job from a rails app:
 
     redis = Redis.new
-    redis.sadd("varnishpurged:queue", "de.dawanda.com/product/1234")
+    redis.sadd("varnishpurged:queue", "my,url.com/product/1234")
 
 
 
