@@ -14,17 +14,19 @@
 #include <curl/curl.h>
 
 #include "redis_cfg.h"
+#include "varnish_cfg.h"
 
 class PurgeWorker {
 protected:
 	ev::loop_ref& loop;
 	ev::timer poll_timer;
 	redisAsyncContext* redis;
+	varnish_cfg* varnish_config;
 	redis_cfg* redis_config;
 	CURL *curl;
 
 public:
-	PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config);
+	PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config, varnish_cfg* varnish_config);
 	void purgeUrl(char* url);
 	void purgeNext(char* url_or_null);
 

@@ -19,12 +19,12 @@ int main(int argc, char* argv[]) {
 	strncpy(redis_config->skey, "fnord:queue", sizeof(redis_config->host));
 	redis_config->port = 6379;
 
-
 	// FIXPAUL: parse_longopts and build these config structs
-    //redis_cfg* redis_config = (redis_cfg *)malloc(sizeof(redis_cfg));
+	varnish_cfg* varnish_config = (varnish_cfg *)malloc(sizeof(varnish_cfg));
+	strncpy(varnish_config->host, "localhost", sizeof(redis_config->host));
+	varnish_config->port = 8080;
 
-
-	PurgeWorker* worker = new PurgeWorker(ev, redis_config);
+	PurgeWorker* worker = new PurgeWorker(ev, redis_config, varnish_config);
 
 	ev_loop(ev, 0);
 	return 0;

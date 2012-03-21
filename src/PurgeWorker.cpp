@@ -1,10 +1,11 @@
 #include "varnishpurged.h"
 #include "PurgeWorker.h"
 
-PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_) :
+PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_, varnish_cfg* varnish_config_) :
 	loop(loop_),
 	poll_timer(loop_),
 	redis(nullptr),
+	varnish_config(varnish_config_),
 	redis_config(redis_config_)
 {
 	curl = curl_easy_init();
