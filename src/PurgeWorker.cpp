@@ -40,11 +40,11 @@ void PurgeWorker::purgeUrl(char* url){
 
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 
-	curl_easy_setopt(curl, CURLOPT_URL, "http://falbala.23loc.com/");
+	curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:9000/");
 	curl_easy_setopt(curl, CURLOPT_HEADER, 1);
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 300);
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 300);
-	//curl_easy_setopt(curl, CURLOPT_HTTPHEADER, "PURGE");
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PURGE");
 
 	curl_easy_perform(curl);	
 }
