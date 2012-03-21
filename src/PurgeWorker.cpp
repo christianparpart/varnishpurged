@@ -26,6 +26,9 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_) :
 
 
 void PurgeWorker::purgeUrl(char* url){
+    // this is a shortened version of what was previously called from the ruby code:
+    // curl --request PURGE --header X-Host:de.dawanda.com product-varnish:8080/product/1234
+    
 	printf("\npurging: %s \n", url);
 }
 
@@ -63,8 +66,8 @@ void PurgeWorker::onConnect(const redisAsyncContext* redis, int status) {
 	if (status == REDIS_OK) {
 		printf("connected, listening for purge urls\n");	
 	} else {
-  		printf("ERROR: %s\n", redis->errstr);	
-  		exit(1);
+		printf("ERROR: %s\n", redis->errstr);	
+		exit(1);
 	}
 }
 
