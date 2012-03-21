@@ -26,7 +26,7 @@ e.g.
 Adding Purge-Jobs
 -----------------
 
-purge-jbos (urls) are added without the leading http:// and without port! they should look like this:
+purge-jobs (urls that should be purged) are added without the leading `http://` and without port. they should look like this:
 
     de.dawanda.com/product/1234
 

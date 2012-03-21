@@ -53,8 +53,6 @@ void PurgeWorker::purgeUrl(char* url){
 	snprintf(purge_xhost, STR_BUFSIZE, "X-Host: %s", url);
 	headers = curl_slist_append(headers, purge_xhost);
 	
-	// this is a shortened version of what was previously called from the ruby code:
-	// curl --request PURGE --header X-Host:de.dawanda.com product-varnish:8080/product/1234
 	curl_easy_setopt(curl, CURLOPT_URL, purge_url);
 	curl_easy_setopt(curl, CURLOPT_HEADER, 1);
 	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PURGE");
