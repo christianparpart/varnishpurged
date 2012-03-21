@@ -7,6 +7,13 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_) :
 	redis(nullptr),
 	redis_config(redis_config_)
 {
+	curl = curl_easy_init();
+
+	if(curl == NULL){
+		printf("ERROR: curl init failed\n");
+		exit(1);
+	}
+
 	poll_timer.set<PurgeWorker, &PurgeWorker::onPoll>(this);
 	poll_timer.start(POLL_TIMEOUT_INIT, 0.0);
 
@@ -26,10 +33,15 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_) :
 
 
 void PurgeWorker::purgeUrl(char* url){
-    // this is a shortened version of what was previously called from the ruby code:
-    // curl --request PURGE --header X-Host:de.dawanda.com product-varnish:8080/product/1234
-    
 	printf("\npurging: %s \n", url);
+
+	// this is a shortened version of what was previously called from the ruby code:
+	// curl --request PURGE --header X-Host:de.dawanda.com product-varnish:8080/product/1234
+
+    curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:2323/");
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+    curl_easy_perform(curl);
 }
 
 
