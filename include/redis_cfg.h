@@ -2,8 +2,8 @@
 #define fastpurge_refis_cfg_h 1
 
 	struct redis_cfg {
-		char host[250];
-		char skey[1024];
+		char host[STR_BUFSIZE];
+		char skey[STR_BUFSIZE];
 		int port;
 	};
 

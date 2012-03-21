@@ -4,8 +4,6 @@
 #define FNORDCAST1 (void (*)(const redisAsyncContext*, int))
 #define FNORDCAST2 (void (*)(redisAsyncContext*, void*, void*))
 
-#define REDIS_DEFAULT_PORT 6379
-
 #include <signal.h>
 #include <string.h>
 #include <hiredis/hiredis.h>
