@@ -45,13 +45,14 @@ void PurgeWorker::onConnect(const redisAsyncContext* redis, int status) {
 		printf("connected to redis, listening for product_ids\n");	
 	} else {
   		printf("ERROR: %s\n", redis->errstr);	
+  		exit(1);
 	}
 }
 
 void PurgeWorker::onDisconnect(const redisAsyncContext* redis, int status) {
 	if (status != REDIS_OK) {
-		printf("ERROR: %s\n", redis->errstr);
-		return;
+		printf("DISCONNECT: %s\n", redis->errstr);
+		exit(1);
 	}
 }
 
