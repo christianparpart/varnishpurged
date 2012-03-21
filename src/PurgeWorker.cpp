@@ -38,10 +38,15 @@ void PurgeWorker::purgeUrl(char* url){
 	// this is a shortened version of what was previously called from the ruby code:
 	// curl --request PURGE --header X-Host:de.dawanda.com product-varnish:8080/product/1234
 
-    curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:2323/");
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 
-    curl_easy_perform(curl);
+	curl_easy_setopt(curl, CURLOPT_URL, "http://falbala.23loc.com/");
+	curl_easy_setopt(curl, CURLOPT_HEADER, 1);
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 300);
+	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 300);
+	//curl_easy_setopt(curl, CURLOPT_HTTPHEADER, "PURGE");
+
+	curl_easy_perform(curl);	
 }
 
 
