@@ -2,10 +2,11 @@
 #include "PurgeWorker.h"
 #include "ip_addr.h"
 
-PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config) :
+PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_) :
 	loop(loop_),
 	poll_timer(loop_),
-	redis(nullptr)
+	redis(nullptr),
+	redis_config(redis_config_)
 {
 	poll_timer.set<PurgeWorker, &PurgeWorker::onPoll>(this);
 	poll_timer.start(POLL_TIMEOUT_INIT, 0.0);
@@ -35,11 +36,7 @@ void PurgeWorker::purgeNext(std::string url) {
 
 
 void PurgeWorker::onPoll(ev::timer& timer, int revents) {
-	printf("polled\n");
-
-	char command[1024] = "SPOP fnord"; // FIXPAUL
-
-	redisAsyncCommand(this->redis, FNORDCAST2 &PurgeWorker::onPollData, this, command);
+	redisAsyncCommand(this->redis, FNORDCAST2 &PurgeWorker::onPollData, this, "SPOP %s", redis_config->skey);
 }
 
 

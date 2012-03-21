@@ -18,10 +18,8 @@ class PurgeWorker {
 protected:
 	ev::loop_ref& loop;
 	ev::timer poll_timer;
-	char const *address;
 	redisAsyncContext* redis;
-	int redisKeyMode;
-	char* redisKeyString;
+	redis_cfg* redis_config;
 
 public:
 	PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config);
