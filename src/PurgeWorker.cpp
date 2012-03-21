@@ -29,9 +29,8 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, char const *address_) :
 	}
 }
 
-void PurgeWorker::onPoll(ev::timer& timer, int revents) {
-	printf("polled\n");
 
+void PurgeWorker::purgeNext(std::string url) {
 	// FIXPAUL: re-queue the poll with zero timeout if there was 
 	// something to process (work at maximum speed, then sleep)
 	// poll_timer.start(POLL_TIMEOUT_BUSY, 0.0);
@@ -40,11 +39,22 @@ void PurgeWorker::onPoll(ev::timer& timer, int revents) {
 }
 
 
-void PurgeWorker::onKeydata(redisAsyncContext *redis, void* response, void* privdata) {
+void PurgeWorker::onPoll(ev::timer& timer, int revents) {
+	printf("polled\n");
+
+	char command[1024] = "SPOP fnord"; // FIXPAUL
+
+	redisAsyncCommand(this->redis, FNORDCAST2 &PurgeWorker::onPollData, this, command);
+}
+
+
+void PurgeWorker::onPollData(redisAsyncContext *redis, void *response, void *privdata) {
 	PurgeWorker *self = reinterpret_cast<PurgeWorker *>(privdata);	
 	printf("onkeydata\n");
-	//self->purgeMatchingKeys(response);  
+
+	self->purgeNext("fnord"); // FIXPAUL
 }
+
 
 void PurgeWorker::onConnect(const redisAsyncContext* redis, int status) {
 	if (status == REDIS_OK) {
@@ -55,12 +65,14 @@ void PurgeWorker::onConnect(const redisAsyncContext* redis, int status) {
 	}
 }
 
+
 void PurgeWorker::onDisconnect(const redisAsyncContext* redis, int status) {
 	if (status != REDIS_OK) {
 		printf("DISCONNECT: %s\n", redis->errstr);
 		exit(1);
 	}
 }
+
 
 ip_addr* PurgeWorker::parseAddress(const char* address_) {
 	std::string address = address_;

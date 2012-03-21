@@ -25,13 +25,12 @@ protected:
 
 public:
 	PurgeWorker(ev::loop_ref& loop_, const char* address_);
-    void purgeNext();	
-	void purgeURL(std::string key);
+	void purgeNext(std::string key);
 	ip_addr* parseAddress(const char* address);
 
     static void onPoll(ev_timer* timer, int revents);
 
-	static void onKeydata(redisAsyncContext *redis, void *response, void *privdata);
+	static void onPollData(redisAsyncContext *redis, void *response, void *privdata);
 	static void onConnect(const redisAsyncContext* redis, int status);
 	static void onDisconnect(const redisAsyncContext* redis, int status);	
 
