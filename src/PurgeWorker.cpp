@@ -25,12 +25,12 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_) :
 }
 
 
-void PurgeWorker::purgeNext(std::string url) {
+void PurgeWorker::purgeNext(char* url_or_null) {
 	// FIXPAUL: re-queue the poll with zero timeout if there was 
 	// something to process (work at maximum speed, then sleep)
 	// poll_timer.start(POLL_TIMEOUT_BUSY, 0.0);
 
-	printf("next url: %s", url.c_str());
+	printf("next url: %s \n", url_or_null);
 
 	poll_timer.start(POLL_TIMEOUT_IDLE, 0.0);
 }
@@ -41,11 +41,15 @@ void PurgeWorker::onPoll(ev::timer& timer, int revents) {
 }
 
 
-void PurgeWorker::onPollData(redisAsyncContext *redis, void *response, void *privdata) {
-	PurgeWorker *self = reinterpret_cast<PurgeWorker *>(privdata);	
-	printf("onkeydata\n");
+void PurgeWorker::onPollData(redisAsyncContext *redis, redisReply *reply, void *privdata) {
+	PurgeWorker *self = reinterpret_cast<PurgeWorker *>(privdata);
+	
+	if (reply == NULL){
+		printf("something wen't wrong (empty redis replay), bailing out");
+		exit(1);
+	}
 
-	self->purgeNext("fnord"); // FIXPAUL
+	self->purgeNext(reply->str);
 }
 
 

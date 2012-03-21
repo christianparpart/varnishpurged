@@ -23,11 +23,11 @@ protected:
 
 public:
 	PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config);
-	void purgeNext(std::string key);
+	void purgeNext(char* url_or_null);
 
     static void onPoll(ev_timer* timer, int revents);
 
-	static void onPollData(redisAsyncContext *redis, void *response, void *privdata);
+	static void onPollData(redisAsyncContext *redis, redisReply *response, void *privdata);
 	static void onConnect(const redisAsyncContext* redis, int status);
 	static void onDisconnect(const redisAsyncContext* redis, int status);	
 
