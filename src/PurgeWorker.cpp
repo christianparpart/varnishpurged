@@ -25,14 +25,20 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_) :
 }
 
 
+void PurgeWorker::purgeUrl(char* url){
+	printf("\npurging: %s \n", url);
+}
+
+
 void PurgeWorker::purgeNext(char* url_or_null) {
-	// FIXPAUL: re-queue the poll with zero timeout if there was 
-	// something to process (work at maximum speed, then sleep)
-	// poll_timer.start(POLL_TIMEOUT_BUSY, 0.0);
-
-	printf("next url: %s \n", url_or_null);
-
-	poll_timer.start(POLL_TIMEOUT_IDLE, 0.0);
+	if(url_or_null == NULL){
+		printf(".");
+		fflush(stdout);
+		poll_timer.start(POLL_TIMEOUT_IDLE, 0.0);
+	} else {
+		purgeUrl(url_or_null);
+		poll_timer.start(POLL_TIMEOUT_BUSY, 0.0);
+	}
 }
 
 

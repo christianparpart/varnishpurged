@@ -23,6 +23,7 @@ protected:
 
 public:
 	PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config);
+	void purgeUrl(char* url);
 	void purgeNext(char* url_or_null);
 
     static void onPoll(ev_timer* timer, int revents);
