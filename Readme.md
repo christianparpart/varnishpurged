@@ -1,7 +1,7 @@
 varnishpurged
 =============
 
-small deamon to purge urls from varnish efficcently
+small c++ app to purge urls from varnish quickly (using a redis-based queue) 
 
 
 adding purge-jobs/urls
