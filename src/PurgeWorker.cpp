@@ -66,8 +66,8 @@ void PurgeWorker::purgeUrl(char* url){
 	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PURGE");
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 300);
-	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 300);
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, VARNISH_TIMEOUT);
+	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, VARNISH_TIMEOUT);
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, 10);
 
 	curl_easy_perform(curl);
