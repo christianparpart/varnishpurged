@@ -13,4 +13,6 @@
 #define POLL_TIMEOUT_IDLE 0.50
 #define POLL_TIMEOUT_BUSY 0.01
 
+#define STR_BUFSIZE 4096
+
 #endif

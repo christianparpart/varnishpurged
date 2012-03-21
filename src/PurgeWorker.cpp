@@ -34,14 +34,28 @@ PurgeWorker::PurgeWorker(ev::loop_ref& loop_, redis_cfg* redis_config_, varnish_
 
 
 void PurgeWorker::purgeUrl(char* url){
-	printf("\npurging: %s \n", url);
+	char purge_url[STR_BUFSIZE];
+	std::string source_url = url;
+	int ind = source_url.find("/");
+
+	if(ind == -1)
+		return;
+
+	snprintf(
+	  purge_url, STR_BUFSIZE, 
+	  "http://%s:%i%s", 
+	  varnish_config->host,
+	  varnish_config->port,
+	  (url + ind)
+	);
+
+	printf("\npurging: %s -> %s \n", url, purge_url);
 
 	// this is a shortened version of what was previously called from the ruby code:
 	// curl --request PURGE --header X-Host:de.dawanda.com product-varnish:8080/product/1234
-
 	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 
-	curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:9000/");
+	curl_easy_setopt(curl, CURLOPT_URL, purge_url);
 	curl_easy_setopt(curl, CURLOPT_HEADER, 1);
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 300);
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 300);
