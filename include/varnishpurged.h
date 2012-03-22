@@ -1,8 +1,6 @@
 #ifndef varnishpurged_h
 #define varnishpurged_h (1)
 
-#include <ev++.h>
-
 #define REDIS_QUEUE_KEY "varnishpurged:queue"
 
 #define POLL_TIMEOUT_INIT 0.10

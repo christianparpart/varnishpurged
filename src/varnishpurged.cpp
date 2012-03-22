@@ -1,48 +1,54 @@
+#include <string>
+#include <vector>
+#include <memory>
 #include <cstdio>
 #include <cstdlib>
-#include <getopt.h>
 #include <cstring>
-#include <vector>
-#include <string>
-#include <cstdlib>
+#include <getopt.h>
 #include <ev++.h>
 
 #include "varnishpurged.h"
 #include "PurgeWorker.h"
+#include "redis_cfg.h"
+#include "varnish_cfg.h"
 
-void parseAddress(char* address_, char* host, int* port){
-	std::string address = address_;
-	int ind = address.find(":");
+bool parseAddress(const std::string& address, std::string& host, int& port)
+{
+	size_t ind = address.find(":");
 
-	if(ind == -1){
-		printf("ERROR: invalid address: %s\n", address_);
-		exit(1);
+	if (ind == std::string::npos) {
+		printf("ERROR: invalid address: %s\n", address.c_str());
+		return false;
 	}
 
-	*port = atoi(address.substr(ind+1).c_str());   
-	strncpy(host, address.substr(0, ind).c_str(), STR_BUFSIZE);
+	port = std::atoi(address.substr(ind + 1).c_str());   
+	host = address.substr(0, ind);
+
+	return true;
 }
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[])
+{
 	ev::default_loop ev;
 
-	if(argc != 3){
+	if (argc != 3) {
 		printf("usage: %s varnish_host:port redis_host:port\n", argv[0]);
-		exit(1);
+		return 1;
 	}
 
+	auto varnish_config = std::make_shared<varnish_cfg>();
+	if (!parseAddress(argv[1], varnish_config->host, varnish_config->port))
+		return 2;
 
-	varnish_cfg* varnish_config = (varnish_cfg *)malloc(sizeof(varnish_cfg));
-	parseAddress(argv[1], varnish_config->host, &varnish_config->port);
+	auto redis_config = std::make_shared<redis_cfg>();
+	redis_config->skey = REDIS_QUEUE_KEY;
+	if (!parseAddress(argv[2], redis_config->host, redis_config->port))
+		return 3;
 
-	redis_cfg* redis_config = (redis_cfg *)malloc(sizeof(redis_cfg));
-	strncpy(redis_config->skey, REDIS_QUEUE_KEY, sizeof(redis_config->host));
-	parseAddress(argv[2], redis_config->host, &redis_config->port);
+	std::unique_ptr<PurgeWorker> worker(new PurgeWorker(ev, redis_config.get(), varnish_config.get()));
 
+	worker->run();
 
-	PurgeWorker* worker = new PurgeWorker(ev, redis_config, varnish_config);
-
-	ev_loop(ev, 0);
 	return 0;
 }
