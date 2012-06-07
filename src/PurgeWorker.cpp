@@ -28,7 +28,7 @@ PurgeWorker::PurgeWorker(ev::loop_ref loop_, redis_cfg* redis_config_, varnish_c
 	redisLibevAttach(loop, redis);
 
 	redisAsyncSetConnectCallback(redis, (redisConnectCallback*) &PurgeWorker::onConnect);    
-	redisAsyncSetDisconnectCallback(redis, (redisConnectCallback*) &PurgeWorker::onDisconnect);    
+	redisAsyncSetDisconnectCallback(redis, (redisDisconnectCallback*) &PurgeWorker::onDisconnect);
 
 	if (redis->err) {
 		printf("ERROR: %s\n", redis->errstr);
