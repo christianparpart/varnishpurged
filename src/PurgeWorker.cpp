@@ -3,6 +3,7 @@
 #include "PurgeWorker.h"
 #include "redis_cfg.h"
 #include "varnish_cfg.h"
+#include <hiredis/adapters/libev.h>
 
 PurgeWorker::PurgeWorker(ev::loop_ref loop_, redis_cfg* redis_config_, varnish_cfg* varnish_config_) :
 	loop(loop_),

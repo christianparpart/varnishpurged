@@ -5,7 +5,6 @@
 #include <string.h>
 #include <hiredis/hiredis.h>
 #include <hiredis/async.h>
-#include <hiredis/adapters/libev.h>
 #include <curl/curl.h>
 #include <ev++.h>
 
