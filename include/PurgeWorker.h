@@ -31,7 +31,7 @@ public:
 
 private:
 	static void onPollData(redisAsyncContext *redis, redisReply *response, void *privdata);
-	static void onConnect(const redisAsyncContext* redis, int status);
+	static void onConnect(const redisAsyncContext* redis);
 	static void onDisconnect(const redisAsyncContext* redis, int status);	
 
 	void onPoll(ev::timer& timer, int revents);

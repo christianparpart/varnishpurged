@@ -107,12 +107,12 @@ void PurgeWorker::onPollData(redisAsyncContext* redis, redisReply* reply, void* 
 	self->purgeNext(reply->str);
 }
 
-void PurgeWorker::onConnect(const redisAsyncContext* redis, int status)
+void PurgeWorker::onConnect(const redisAsyncContext* redis)
 {
-	if (status == REDIS_OK) {
+	if (redis->err == REDIS_OK) {
 		printf("connected, listening for purge urls\n");	
 	} else {
-		printf("Failed to connect to Redis server: status=%d, code=%d, %s\n", status, redis->err, redis->errstr);	
+		printf("Failed to connect to Redis server: code=%d, %s\n", redis->err, redis->errstr);
 		exit(1); // TODO your spaceshuttle is going to shutdown ungracefully NOW. FIXPAUL's code.
 		// FYI if a connect fails, just wait and try later again. queue up pending purges until then.
 	}
