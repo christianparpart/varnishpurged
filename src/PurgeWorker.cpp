@@ -31,7 +31,7 @@ PurgeWorker::PurgeWorker(ev::loop_ref loop_, redis_cfg* redis_config_, varnish_c
 	redisAsyncSetDisconnectCallback(redis, (redisDisconnectCallback*) &PurgeWorker::onDisconnect);
 
 	if (redis->err) {
-		printf("ERROR: %s\n", redis->errstr);
+		printf("Failed to initiate async connect to Redis server: code=%d, %s\n", redis->err, redis->errstr);	
 		exit(1); // TODO FIXPAUL's code. never exit a spaceshuttle just because you feel mad at a callee.
 	}
 }
@@ -112,7 +112,7 @@ void PurgeWorker::onConnect(const redisAsyncContext* redis, int status)
 	if (status == REDIS_OK) {
 		printf("connected, listening for purge urls\n");	
 	} else {
-		printf("ERROR: %s\n", redis->errstr);	
+		printf("Failed to connect to Redis server: status=%d, code=%d, %s\n", status, redis->err, redis->errstr);	
 		exit(1); // TODO your spaceshuttle is going to shutdown ungracefully NOW. FIXPAUL's code.
 		// FYI if a connect fails, just wait and try later again. queue up pending purges until then.
 	}
