@@ -48,6 +48,11 @@ bool dropPrivileges(const std::string& username, const std::string& groupname)
 			fprintf(stderr, "Could not find group: %s\n", groupname.c_str());
 			return false;
 		}
+	} else if (!getgid()) {
+		setgroups(0, nullptr);
+		if (!username.empty()) {
+			initgroups(username.c_str(), gr->gr_gid);
+		}
 	}
 
 	if (!username.empty() && !getuid()) {
