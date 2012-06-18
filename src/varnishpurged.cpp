@@ -56,11 +56,6 @@ bool dropPrivileges(const std::string& username, const std::string& groupname)
 				fprintf(stderr, "could not setgid to %s: %s\n", username.c_str(), strerror(errno));
 				return false;
 			}
-
-			if (chdir(pw->pw_dir) < 0) {
-				fprintf(stderr, "could not chdir to %s: %s\n", pw->pw_dir, strerror(errno));
-				return false;
-			}
 		} else {
 			fprintf(stderr, "Could not find group: %s\n", groupname.c_str());
 			return false;
@@ -153,7 +148,7 @@ int main(int argc, char * const argv[])
 
 	std::unique_ptr<PurgeWorker> worker(new PurgeWorker(ev, redis_config.get(), varnish_config.get()));
 
-	if (daemonize && ::daemon(true /*no chdir?*/, false /*no close?*/) < 0) {
+	if (daemonize && ::daemon(false /*no chdir?*/, false /*no close?*/) < 0) {
 		fprintf(stderr, "Daemonizing failed: %s\n", strerror(errno));
 		return 6;
 	}
