@@ -34,6 +34,9 @@ bool dropPrivileges(const std::string& username)
 {
 	if (!username.empty() && !getuid()) {
 		if (struct passwd *pw = getpwnam(username.c_str())) {
+			if (setgid(pw->pw_gid) < 0)
+				return false;
+
 			setgroups(0, nullptr);
 			initgroups(username.c_str(), pw->pw_gid);
 
@@ -48,7 +51,7 @@ bool dropPrivileges(const std::string& username)
 	}
 
 	if (!::getuid() || !::geteuid() || !::getgid() || !::getegid()) {
-		fprintf(stderr, "Service is not allowed to run with administrative permissionsService is still running with administrative permissions.");
+		fprintf(stderr, "Service is not allowed to run with administrative permissionsService is still running with administrative permissions.\n");
 		return false;
 	}
 
