@@ -30,39 +30,19 @@ bool parseAddress(const std::string& address, std::string& host, int& port)
 	return true;
 }
 
-bool dropPrivileges(const std::string& username, const std::string& groupname)
+bool dropPrivileges(const std::string& username)
 {
-	if (!groupname.empty() && !getgid()) {
-		if (struct group *gr = getgrnam(groupname.c_str())) {
-			if (setgid(gr->gr_gid) != 0) {
-				fprintf(stderr, "could not setgid to %s: %s\n", groupname.c_str(), strerror(errno));
-				return false;
-			}
-
-			setgroups(0, nullptr);
-
-			if (!username.empty()) {
-				initgroups(username.c_str(), gr->gr_gid);
-			}
-		} else {
-			fprintf(stderr, "Could not find group: %s\n", groupname.c_str());
-			return false;
-		}
-	} else if (!getgid()) {
-		setgroups(0, nullptr);
-		if (!username.empty()) {
-			initgroups(username.c_str(), gr->gr_gid);
-		}
-	}
-
 	if (!username.empty() && !getuid()) {
 		if (struct passwd *pw = getpwnam(username.c_str())) {
+			setgroups(0, nullptr);
+			initgroups(username.c_str(), pw->pw_gid);
+
 			if (setuid(pw->pw_uid) != 0) {
 				fprintf(stderr, "could not setgid to %s: %s\n", username.c_str(), strerror(errno));
 				return false;
 			}
 		} else {
-			fprintf(stderr, "Could not find group: %s\n", groupname.c_str());
+			fprintf(stderr, "Could not find username: %s\n", username.c_str());
 			return false;
 		}
 	}
@@ -77,7 +57,7 @@ bool dropPrivileges(const std::string& username, const std::string& groupname)
 
 void printHelp()
 {
-	printf("varnishpurged [-d] [-u USER] [-g GROUP] -v VARNISH:PORT -r REDIS:PORT\n");
+	printf("varnishpurged [-d] [-u USER] -v VARNISH:PORT -r REDIS:PORT\n");
 }
 
 int main(int argc, char * const argv[])
@@ -85,7 +65,6 @@ int main(int argc, char * const argv[])
 	struct option long_options[] = {
 		{ "daemon", no_argument, nullptr, 'd' },
 		{ "user", required_argument, nullptr, 'u' },
-		{ "group", required_argument, nullptr, 'g' },
 		{ "varnish", required_argument, nullptr, 'v' },
 		{ "redis", required_argument, nullptr, 'r' },
 		{ 0, 0, 0, 0 }
@@ -93,13 +72,12 @@ int main(int argc, char * const argv[])
 
 	bool daemonize = false;
 	std::string userName;
-	std::string groupName;
 	std::string varnishAddr;
 	std::string redisAddr;
 
 	for (bool done = false; !done; ) {
 		int long_index = 0;
-		switch (getopt_long(argc, argv, "hdu:g:v:r:", long_options, &long_index)) {
+		switch (getopt_long(argc, argv, "hdu:v:r:", long_options, &long_index)) {
 			case 'h':
 				printHelp();
 				return 0;
@@ -108,9 +86,6 @@ int main(int argc, char * const argv[])
 				break;
 			case 'u':
 				userName = optarg;
-				break;
-			case 'g':
-				groupName = optarg;
 				break;
 			case 'v':
 				varnishAddr = optarg;
@@ -137,7 +112,7 @@ int main(int argc, char * const argv[])
 		return 2;
 	}
 
-	if (!dropPrivileges(userName, groupName))
+	if (!dropPrivileges(userName))
 		return 3;
 
 	ev::default_loop ev;
